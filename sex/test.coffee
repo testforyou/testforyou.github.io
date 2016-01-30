@@ -34,7 +34,7 @@ showResult = (data) ->
 
 	elem.append "<p>&nbsp;</p>"
 	elem.append "<p>&nbsp;</p>"
-	elem.append "<p>테스트 URL 공유 : <a href='http://testforyou.github.io/sex' target='_blank'>http://testforyou.github.io/sex</a></p>"
+	elem.append "<p>테스트 URL 공유 : <a href='http://testforyou.github.io/sex/index.html' target='_blank'>http://testforyou.github.io/sex</a></p>"
 	elem.append "<p>테스트 결과 공유 : <a href='http://testforyou.github.io/sex/index.html?result=#{result_params}' target='_blank'>http://testforyou.github.io/sex/index.html?result=#{result_params}</a></p>"
 	elem.show()
 
