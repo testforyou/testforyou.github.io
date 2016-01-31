@@ -125,6 +125,37 @@ types = {
   "B9": "내 애널에 삽입"
 }
 
+googleFormFields = {
+	"gender": "entry.865375991",
+	"A1": "entry.564425266",
+	"A2": "entry.1091385879",
+	"A3": "entry.1336715693",
+	"A4": "entry.1263430039",
+	"A5": "entry.509907190",
+	"A6": "entry.1887676700",
+	"A7": "entry.182903792",
+	"B1": "entry.994310610",
+	"B2": "entry.98929449",
+	"B3": "entry.1786579350",
+	"B4": "entry.2023754708",
+	"B5": "entry.824662812",
+	"B6": "entry.1238672103",
+	"B7": "entry.396042774",
+	"B8": "entry.1763695004",
+	"B9": "entry.1086089414",
+	"C1": "entry.763210292",
+	"C2": "entry.5149166",
+	"C3": "entry.1660603229",
+	"C5": "entry.2031769800",
+	"C6": "entry.1085640952",
+	"C7": "entry.1054241483",
+	"C8": "entry.1155186709",
+	"C9": "entry.136639173",
+	"C10": "entry.1510636373",
+	"C11": "entry.1847382440",
+	"C12": "entry.1132290690"
+}
+
 currentIndex = -> $("#question_container").attr("data-current-index") - 0
 
 showQuestion = ->
@@ -170,7 +201,7 @@ resultToParams = (ver, result, arr) ->
 		str = window.gender + "~" + str
 		return encodeURIComponent(Base64.encode64(str))
 
-showResult = (data) ->
+showResult = (data, sendToGoogle) ->
 	ver = "4"
 	elem = $("#result_container")
 	result = {}
@@ -190,6 +221,9 @@ showResult = (data) ->
 		arr.push {type: k, score: v}
 	sorted = arr.sort (a, b) -> b.score - a.score
 
+	if sendToGoogle
+		sendResultToGoogle(sorted)
+
 	if window.gender is "m"
 		gender = "남성"
 	else
@@ -207,6 +241,14 @@ showResult = (data) ->
 	elem.append "<p>테스트 결과 공유 : <a href='http://testforyou.github.io/sex/index.html?result=#{result_params}&ver=#{ver}' target='_blank'>http://testforyou.github.io/sex/index.html?result=#{result_params}&ver=#{ver}</a></p>"
 	elem.show()
 
+sendResultToGoogle = (result) ->
+	data = {}
+	data[googleFormFields.gender] = window.gender
+	for r in result
+		data[googleFormFields[r.type]] = r.score
+	url = "https://docs.google.com/forms/d/1wimPzXKcrDdUvy8zjdrf7hwkmHxHLqI7jccLWeoNC0I/formResponse"
+	$.post url, data
+
 getParams = ->
   query = window.location.search.substring(1)
   raw_vars = query.split("&")
@@ -218,7 +260,7 @@ getParams = ->
 
 showNext = ->
 	if currentIndex() >= data.length
-		showResult(data)
+		showResult(data, true)
 	else
 		showQuestion()
 
@@ -234,7 +276,7 @@ goBack = ->
 
 $(document).ready ->
 	if getParams()["result"]
-		showResult()
+		showResult(undefined, false)
 
 	$(".start-btn button").click (e) ->
 		if $(e.target).hasClass("btn-male")

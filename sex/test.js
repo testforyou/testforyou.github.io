@@ -3,7 +3,7 @@
   
 (function(){var t,r,e,n,o,a,c,h,i,u,s,f,l,d,p,A,g={}.hasOwnProperty,C=function(t,r){function e(){this.constructor=t}for(var n in r)g.call(r,n)&&(t[n]=r[n]);return e.prototype=r.prototype,t.prototype=new e,t.__super__=r.prototype,t};for(h=String.fromCharCode,t="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",e=/[^a-z\d\+\=\/]/gi,r={},d=t.split(""),i=f=0,l=d.length;l>f;i=++f)o=d[i],r[o]=i;n=function(t){function r(t){t?this.message='"'+t+'" is an invalid Base64 character':this.message="Invalid bytes sequence"}return C(r,t),r.prototype.name="InvalidSequence",r}(Error),c=null!=(p=this.btoa)?p:this.btoa=function(r){var e,a,c,h,u,s,f,l,d,p,A,g;for(d="",i=0;i<r.length;){if(e=r.charCodeAt(i++),a=r.charCodeAt(i++),c=r.charCodeAt(i++),l=Math.max(e,a,c)>255)throw new n(l);for(h=e>>2,u=(3&e)<<4|a>>4,s=(15&a)<<2|c>>6,f=63&c,isNaN(a)?s=f=64:isNaN(c)&&(f=64),g=[h,u,s,f],p=0,A=g.length;A>p;p++)o=g[p],d+=t.charAt(o)}return d},a=null!=(A=this.atob)?A:this.atob=function(t){var e,o,a,c,u,s,f,l,d;if(d="",i=0,l=t.length,l%4)throw new n;for(;l>i;)c=r[t.charAt(i++)],u=r[t.charAt(i++)],s=r[t.charAt(i++)],f=r[t.charAt(i++)],e=c<<2|u>>4,o=(15&u)<<4|s>>2,a=(3&s)<<6|f,d+=h(e),64!==s&&(d+=h(o)),64!==f&&(d+=h(a));return d},s=function(t){var r,e,n,o;for(t=t.replace(/\r\n/g,"\n"),e="",i=n=0,o=t.length-1;o>=0?o>=n:n>=o;i=o>=0?++n:--n)r=t.charCodeAt(i),128>r?e+=h(r):r>127&&2048>r?(e+=h(r>>6|192),e+=h(63&r|128)):(e+=h(r>>12|224),e+=h(r>>6&63|128),e+=h(63&r|128));return e},u=function(t){var r,e,n,o,a;for(a="",i=r=e=n=0;i<t.length;)r=t.charCodeAt(i),128>r?(a+=h(r),i++):r>191&&224>r?(n=t.charCodeAt(i+1),a+=h((31&r)<<6|63&n),i+=2):(n=t.charCodeAt(i+1),o=t.charCodeAt(i+2),a+=h((15&r)<<12|(63&n)<<6|63&o),i+=3);return a},this.Base64={encode64:function(t){return c(s(t))},decode64:function(t){return u(a(t.replace(e,"")))}}}).call(this);
 ;
-  var currentIndex, data, getParams, goBack, mark, parseResult, resultToParams, showNext, showQuestion, showResult, shuffle, types;
+  var currentIndex, data, getParams, goBack, googleFormFields, mark, parseResult, resultToParams, sendResultToGoogle, showNext, showQuestion, showResult, shuffle, types;
 
   shuffle = function(a) {
     var i, j, t;
@@ -375,6 +375,37 @@
     "B9": "내 애널에 삽입"
   };
 
+  googleFormFields = {
+    "gender": "entry.865375991",
+    "A1": "entry.564425266",
+    "A2": "entry.1091385879",
+    "A3": "entry.1336715693",
+    "A4": "entry.1263430039",
+    "A5": "entry.509907190",
+    "A6": "entry.1887676700",
+    "A7": "entry.182903792",
+    "B1": "entry.994310610",
+    "B2": "entry.98929449",
+    "B3": "entry.1786579350",
+    "B4": "entry.2023754708",
+    "B5": "entry.824662812",
+    "B6": "entry.1238672103",
+    "B7": "entry.396042774",
+    "B8": "entry.1763695004",
+    "B9": "entry.1086089414",
+    "C1": "entry.763210292",
+    "C2": "entry.5149166",
+    "C3": "entry.1660603229",
+    "C5": "entry.2031769800",
+    "C6": "entry.1085640952",
+    "C7": "entry.1054241483",
+    "C8": "entry.1155186709",
+    "C9": "entry.136639173",
+    "C10": "entry.1510636373",
+    "C11": "entry.1847382440",
+    "C12": "entry.1132290690"
+  };
+
   currentIndex = function() {
     return $("#question_container").attr("data-current-index") - 0;
   };
@@ -452,7 +483,7 @@
     }
   };
 
-  showResult = function(data) {
+  showResult = function(data, sendToGoogle) {
     var arr, elem, gender, item, k, res, result, result_params, sorted, v, ver, _i, _j, _len, _len1;
     ver = "4";
     elem = $("#result_container");
@@ -485,6 +516,9 @@
     sorted = arr.sort(function(a, b) {
       return b.score - a.score;
     });
+    if (sendToGoogle) {
+      sendResultToGoogle(sorted);
+    }
     if (window.gender === "m") {
       gender = "남성";
     } else {
@@ -503,6 +537,18 @@
     return elem.show();
   };
 
+  sendResultToGoogle = function(result) {
+    var r, url, _i, _len;
+    data = {};
+    data[googleFormFields.gender] = window.gender;
+    for (_i = 0, _len = result.length; _i < _len; _i++) {
+      r = result[_i];
+      data[googleFormFields[r.type]] = r.score;
+    }
+    url = "https://docs.google.com/forms/d/1wimPzXKcrDdUvy8zjdrf7hwkmHxHLqI7jccLWeoNC0I/formResponse";
+    return $.post(url, data);
+  };
+
   getParams = function() {
     var key, params, query, raw_vars, v, val, _i, _len, _ref;
     query = window.location.search.substring(1);
@@ -518,7 +564,7 @@
 
   showNext = function() {
     if (currentIndex() >= data.length) {
-      return showResult(data);
+      return showResult(data, true);
     } else {
       return showQuestion();
     }
@@ -539,7 +585,7 @@
 
   $(document).ready(function() {
     if (getParams()["result"]) {
-      showResult();
+      showResult(void 0, false);
     }
     $(".start-btn button").click(function(e) {
       if ($(e.target).hasClass("btn-male")) {
