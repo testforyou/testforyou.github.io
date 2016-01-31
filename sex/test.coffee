@@ -89,7 +89,11 @@ data = shuffle [
 	{"type":"C12", "question":"섹스를 할 때 이성이 두 명이 있으면 괜찮을 것 같다", "score":1},
 	{"type":"C12", "question":"섹스를 할 때 두 명의 이성이 나를 애무해주는 상상을 해봤다", "score":2},
 	{"type":"C12", "question":"섹스를 할 때 두 명의 이성과 함께 셋이 해봤거나, 그렇게 하는 상상으로 자위를 해봤다", "score":3}
+	{"type": "B9", "question": "애널에 무언가를 삽입하고 자위를 해봤거나, 혹은 그런 상상을 해 봤다", "score": 1},
+	{"type": "B9", "question": "성관계 중 상대방의 성기, 혹은 상대방에 의해 무언가가 내 애널에 삽입된 적이 있다", "score": 2},
+	{"type": "B9", "question": "애널에 무언가를 삽입한 채로 외출을 해본 적 있다", "score": 3}
 ]
+
 
 types = {
   "B2": "M",
@@ -117,7 +121,8 @@ types = {
   "C9": "지적인 사람에게 흥분을 느낌",
   "C6": "페티시",
   "C11": "쓰리섬(나 + 동성 + 이성)",
-  "C12": "쓰리섬(나 + 이성 두 명)"
+  "C12": "쓰리섬(나 + 이성 두 명)",
+  "B9": "내 애널에 삽입"
 }
 
 currentIndex = -> $("#question_container").attr("data-current-index") - 0
@@ -198,7 +203,7 @@ showResult = (data) ->
 
 	elem.append "<p>&nbsp;</p>"
 	elem.append "<p>&nbsp;</p>"
-	elem.append "<p>테스트 URL 공유 : <a href='http://testforyou.github.io/sex/index.html' target='_blank'>http://testforyou.github.io/sex</a></p>"
+	elem.append "<p>테스트 주소 : <a href='http://testforyou.github.io/sex/index.html' target='_blank'>http://testforyou.github.io/sex/index.html</a></p>"
 	elem.append "<p>테스트 결과 공유 : <a href='http://testforyou.github.io/sex/index.html?result=#{result_params}&ver=#{ver}' target='_blank'>http://testforyou.github.io/sex/index.html?result=#{result_params}&ver=#{ver}</a></p>"
 	elem.show()
 
