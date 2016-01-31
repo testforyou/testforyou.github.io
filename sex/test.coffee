@@ -227,19 +227,24 @@ mark = (answer) ->
 	$("#question_container").attr "data-current-index", currentIndex() + 1
 	showNext()
 
+goBack = ->
+	if currentIndex() > 0
+		$("#question_container").attr "data-current-index", currentIndex() - 1
+		showNext()
+
 $(document).ready ->
 	if getParams()["result"]
 		showResult()
 
 	$(".start-btn button").click (e) ->
-		debugger
 		if $(e.target).hasClass("btn-male")
 			window.gender = "m"
 		else
 			window.gender = "f"
-		debugger
 		$("#question_container").show()
 		showNext()
 
 	$(".btn_yes").click -> mark(1)
 	$(".btn_no").click -> mark(0)
+
+	$(".btn_back").click goBack

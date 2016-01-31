@@ -3,7 +3,7 @@
   
 (function(){var t,r,e,n,o,a,c,h,i,u,s,f,l,d,p,A,g={}.hasOwnProperty,C=function(t,r){function e(){this.constructor=t}for(var n in r)g.call(r,n)&&(t[n]=r[n]);return e.prototype=r.prototype,t.prototype=new e,t.__super__=r.prototype,t};for(h=String.fromCharCode,t="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",e=/[^a-z\d\+\=\/]/gi,r={},d=t.split(""),i=f=0,l=d.length;l>f;i=++f)o=d[i],r[o]=i;n=function(t){function r(t){t?this.message='"'+t+'" is an invalid Base64 character':this.message="Invalid bytes sequence"}return C(r,t),r.prototype.name="InvalidSequence",r}(Error),c=null!=(p=this.btoa)?p:this.btoa=function(r){var e,a,c,h,u,s,f,l,d,p,A,g;for(d="",i=0;i<r.length;){if(e=r.charCodeAt(i++),a=r.charCodeAt(i++),c=r.charCodeAt(i++),l=Math.max(e,a,c)>255)throw new n(l);for(h=e>>2,u=(3&e)<<4|a>>4,s=(15&a)<<2|c>>6,f=63&c,isNaN(a)?s=f=64:isNaN(c)&&(f=64),g=[h,u,s,f],p=0,A=g.length;A>p;p++)o=g[p],d+=t.charAt(o)}return d},a=null!=(A=this.atob)?A:this.atob=function(t){var e,o,a,c,u,s,f,l,d;if(d="",i=0,l=t.length,l%4)throw new n;for(;l>i;)c=r[t.charAt(i++)],u=r[t.charAt(i++)],s=r[t.charAt(i++)],f=r[t.charAt(i++)],e=c<<2|u>>4,o=(15&u)<<4|s>>2,a=(3&s)<<6|f,d+=h(e),64!==s&&(d+=h(o)),64!==f&&(d+=h(a));return d},s=function(t){var r,e,n,o;for(t=t.replace(/\r\n/g,"\n"),e="",i=n=0,o=t.length-1;o>=0?o>=n:n>=o;i=o>=0?++n:--n)r=t.charCodeAt(i),128>r?e+=h(r):r>127&&2048>r?(e+=h(r>>6|192),e+=h(63&r|128)):(e+=h(r>>12|224),e+=h(r>>6&63|128),e+=h(63&r|128));return e},u=function(t){var r,e,n,o,a;for(a="",i=r=e=n=0;i<t.length;)r=t.charCodeAt(i),128>r?(a+=h(r),i++):r>191&&224>r?(n=t.charCodeAt(i+1),a+=h((31&r)<<6|63&n),i+=2):(n=t.charCodeAt(i+1),o=t.charCodeAt(i+2),a+=h((15&r)<<12|(63&n)<<6|63&o),i+=3);return a},this.Base64={encode64:function(t){return c(s(t))},decode64:function(t){return u(a(t.replace(e,"")))}}}).call(this);
 ;
-  var currentIndex, data, getParams, mark, parseResult, resultToParams, showNext, showQuestion, showResult, shuffle, types;
+  var currentIndex, data, getParams, goBack, mark, parseResult, resultToParams, showNext, showQuestion, showResult, shuffle, types;
 
   shuffle = function(a) {
     var i, j, t;
@@ -530,27 +530,33 @@
     return showNext();
   };
 
+  goBack = function() {
+    if (currentIndex() > 0) {
+      $("#question_container").attr("data-current-index", currentIndex() - 1);
+      return showNext();
+    }
+  };
+
   $(document).ready(function() {
     if (getParams()["result"]) {
       showResult();
     }
     $(".start-btn button").click(function(e) {
-      debugger;
       if ($(e.target).hasClass("btn-male")) {
         window.gender = "m";
       } else {
         window.gender = "f";
       }
-      debugger;
       $("#question_container").show();
       return showNext();
     });
     $(".btn_yes").click(function() {
       return mark(1);
     });
-    return $(".btn_no").click(function() {
+    $(".btn_no").click(function() {
       return mark(0);
     });
+    return $(".btn_back").click(goBack);
   });
 
 }).call(this);
