@@ -373,7 +373,7 @@
   };
 
   parseResult = function() {
-    var a, h, result, score, str, type, ver, _i, _len, _ref;
+    var a, h, result, score, str, type, ver, _i, _j, _len, _len1, _ref, _ref1;
     result = getParams()["result"];
     ver = getParams()["ver"];
     if (!ver) {
@@ -386,6 +386,19 @@
       _ref = str.split("!");
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         a = _ref[_i];
+        score = a.slice(0, 1) - 0;
+        type = a.slice(1);
+        h[type] = score;
+      }
+      return h;
+    } else if (ver === "4") {
+      str = Base64.decode64(decodeURIComponent(result));
+      h = {};
+      window.gender = str.split("~")[0];
+      str = str.split("~")[1];
+      _ref1 = str.split("!");
+      for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
+        a = _ref1[_j];
         score = a.slice(0, 1) - 0;
         type = a.slice(1);
         h[type] = score;
@@ -411,12 +424,24 @@
         return _results;
       })()).join("!");
       return encodeURIComponent(Base64.encode64(str));
+    } else if (ver === "4") {
+      str = ((function() {
+        var _i, _len, _results;
+        _results = [];
+        for (_i = 0, _len = arr.length; _i < _len; _i++) {
+          a = arr[_i];
+          _results.push(a.score + a.type);
+        }
+        return _results;
+      })()).join("!");
+      str = window.gender + "~" + str;
+      return encodeURIComponent(Base64.encode64(str));
     }
   };
 
   showResult = function(data) {
-    var arr, elem, item, k, res, result, result_params, sorted, v, ver, _i, _j, _len, _len1;
-    ver = "3";
+    var arr, elem, gender, item, k, res, result, result_params, sorted, v, ver, _i, _j, _len, _len1;
+    ver = "4";
     elem = $("#result_container");
     result = {};
     if (data) {
@@ -447,6 +472,12 @@
     sorted = arr.sort(function(a, b) {
       return b.score - a.score;
     });
+    if (window.gender === "m") {
+      gender = "남성";
+    } else {
+      gender = "여성";
+    }
+    elem.append("<p style='font-weight: bold'>성별 : " + gender + "</p>");
     for (_j = 0, _len1 = sorted.length; _j < _len1; _j++) {
       item = sorted[_j];
       elem.append("<p><span class=type_name>" + types[item.type] + "</span><span class='type_score score_" + item.score + "'></span></p>");
@@ -490,7 +521,14 @@
     if (getParams()["result"]) {
       showResult();
     }
-    $(".start-btn button").click(function() {
+    $(".start-btn button").click(function(e) {
+      debugger;
+      if ($(e.target).hasClass("btn-male")) {
+        window.gender = "m";
+      } else {
+        window.gender = "f";
+      }
+      debugger;
       $("#question_container").show();
       return showNext();
     });

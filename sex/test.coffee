@@ -141,6 +141,16 @@ parseResult = ->
 			type = a.slice(1)
 			h[type] = score
 		return h
+	else if ver is "4"
+		str = Base64.decode64(decodeURIComponent(result))
+		h = {}
+		window.gender = str.split("~")[0]
+		str = str.split("~")[1]
+		for a in str.split("!")
+			score = a.slice(0, 1) - 0
+			type = a.slice(1)
+			h[type] = score
+		return h
 
 resultToParams = (ver, result, arr) ->
 	if !ver
@@ -150,9 +160,13 @@ resultToParams = (ver, result, arr) ->
 	else if ver is "3"
 		str = (a.score + a.type for a in arr).join("!")
 		return encodeURIComponent(Base64.encode64(str))
+	else if ver is "4"
+		str = (a.score + a.type for a in arr).join("!")
+		str = window.gender + "~" + str
+		return encodeURIComponent(Base64.encode64(str))
 
 showResult = (data) ->
-	ver = "3"
+	ver = "4"
 	elem = $("#result_container")
 	result = {}
 
@@ -170,6 +184,12 @@ showResult = (data) ->
 	for k, v of result
 		arr.push {type: k, score: v}
 	sorted = arr.sort (a, b) -> b.score - a.score
+
+	if window.gender is "m"
+		gender = "남성"
+	else
+		gender = "여성"
+	elem.append "<p style='font-weight: bold'>성별 : #{gender}</p>"
 
 	for item in sorted
 		elem.append "<p><span class=type_name>#{types[item.type]}</span><span class='type_score score_#{item.score}'></span></p>"
@@ -206,7 +226,13 @@ $(document).ready ->
 	if getParams()["result"]
 		showResult()
 
-	$(".start-btn button").click ->
+	$(".start-btn button").click (e) ->
+		debugger
+		if $(e.target).hasClass("btn-male")
+			window.gender = "m"
+		else
+			window.gender = "f"
+		debugger
 		$("#question_container").show()
 		showNext()
 
