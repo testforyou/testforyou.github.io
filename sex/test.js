@@ -373,22 +373,50 @@
   };
 
   parseResult = function() {
-    var result, ver;
+    var a, h, result, score, str, type, ver, _i, _len, _ref;
     result = getParams()["result"];
     ver = getParams()["ver"];
     if (!ver) {
       return JSON.parse(result);
     } else if (ver === "2") {
       return JSON.parse(Base64.decode64(decodeURIComponent(result)));
+    } else if (ver === "3") {
+      str = Base64.decode64(decodeURIComponent(result));
+      h = {};
+      _ref = str.split("!");
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        a = _ref[_i];
+        score = a.slice(0, 1) - 0;
+        type = a.slice(1);
+        h[type] = score;
+      }
+      return h;
     }
   };
 
-  resultToParams = function(result) {
-    return encodeURIComponent(Base64.encode64(JSON.stringify(result)));
+  resultToParams = function(ver, result, arr) {
+    var a, str;
+    if (!ver) {
+      return encodeURIComponent(JSON.stringify(result));
+    } else if (ver === "2") {
+      return encodeURIComponent(Base64.encode64(JSON.stringify(result)));
+    } else if (ver === "3") {
+      str = ((function() {
+        var _i, _len, _results;
+        _results = [];
+        for (_i = 0, _len = arr.length; _i < _len; _i++) {
+          a = arr[_i];
+          _results.push(a.score + a.type);
+        }
+        return _results;
+      })()).join("!");
+      return encodeURIComponent(Base64.encode64(str));
+    }
   };
 
   showResult = function(data) {
-    var arr, elem, item, k, res, result, result_params, sorted, v, _i, _j, _len, _len1;
+    var arr, elem, item, k, res, result, result_params, sorted, v, ver, _i, _j, _len, _len1;
+    ver = "3";
     elem = $("#result_container");
     result = {};
     if (data) {
@@ -423,11 +451,11 @@
       item = sorted[_j];
       elem.append("<p><span class=type_name>" + types[item.type] + "</span><span class='type_score score_" + item.score + "'></span></p>");
     }
-    result_params = resultToParams(result);
+    result_params = resultToParams(ver, result, arr);
     elem.append("<p>&nbsp;</p>");
     elem.append("<p>&nbsp;</p>");
     elem.append("<p>테스트 URL 공유 : <a href='http://testforyou.github.io/sex/index.html' target='_blank'>http://testforyou.github.io/sex</a></p>");
-    elem.append("<p>테스트 결과 공유 : <a href='http://testforyou.github.io/sex/index.html?result=" + result_params + "&ver=2' target='_blank'>http://testforyou.github.io/sex/index.html?result=" + result_params + "&ver=2</a></p>");
+    elem.append("<p>테스트 결과 공유 : <a href='http://testforyou.github.io/sex/index.html?result=" + result_params + "&ver=" + ver + "' target='_blank'>http://testforyou.github.io/sex/index.html?result=" + result_params + "&ver=" + ver + "</a></p>");
     return elem.show();
   };
 

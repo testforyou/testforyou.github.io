@@ -132,13 +132,27 @@ parseResult = ->
 	if !ver
 		return JSON.parse(result)
 	else if ver is "2"
-		JSON.parse(Base64.decode64(decodeURIComponent(result)))
+		return JSON.parse(Base64.decode64(decodeURIComponent(result)))
+	else if ver is "3"
+		str = Base64.decode64(decodeURIComponent(result))
+		h = {}
+		for a in str.split("!")
+			score = a.slice(0, 1) - 0
+			type = a.slice(1)
+			h[type] = score
+		return h
 
-resultToParams = (result) ->
-	#encodeURIComponent(JSON.stringify(result))
-	encodeURIComponent(Base64.encode64(JSON.stringify(result)))
+resultToParams = (ver, result, arr) ->
+	if !ver
+		return encodeURIComponent(JSON.stringify(result))
+	else if ver is "2"
+		return encodeURIComponent(Base64.encode64(JSON.stringify(result)))
+	else if ver is "3"
+		str = (a.score + a.type for a in arr).join("!")
+		return encodeURIComponent(Base64.encode64(str))
 
 showResult = (data) ->
+	ver = "3"
 	elem = $("#result_container")
 	result = {}
 
@@ -160,12 +174,12 @@ showResult = (data) ->
 	for item in sorted
 		elem.append "<p><span class=type_name>#{types[item.type]}</span><span class='type_score score_#{item.score}'></span></p>"
 
-	result_params = resultToParams(result)
+	result_params = resultToParams(ver, result, arr)
 
 	elem.append "<p>&nbsp;</p>"
 	elem.append "<p>&nbsp;</p>"
 	elem.append "<p>테스트 URL 공유 : <a href='http://testforyou.github.io/sex/index.html' target='_blank'>http://testforyou.github.io/sex</a></p>"
-	elem.append "<p>테스트 결과 공유 : <a href='http://testforyou.github.io/sex/index.html?result=#{result_params}&ver=2' target='_blank'>http://testforyou.github.io/sex/index.html?result=#{result_params}&ver=2</a></p>"
+	elem.append "<p>테스트 결과 공유 : <a href='http://testforyou.github.io/sex/index.html?result=#{result_params}&ver=#{ver}' target='_blank'>http://testforyou.github.io/sex/index.html?result=#{result_params}&ver=#{ver}</a></p>"
 	elem.show()
 
 getParams = ->
